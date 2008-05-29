@@ -60,6 +60,25 @@ TGTD_OBJS += $(addprefix fcoe/,\
 TGTD_OBJS += bs_rdwr.o
 endif
 
+#
+# OSD software implementation is in an external library.  The backingstore
+# implementation for tgt to use it is built here.
+#
+ifneq ($(OSDEMU),)
+CFLAGS += -DOSDEMU
+# use threaded implementation?
+#CFLAGS += -DOSDTHREAD
+TGTD_OBJS += bs_osdemu.o
+OSD_ROOT := ../..
+OSD_TARGET_DIR := $(OSD_ROOT)/osd-target
+OSD_UTIL_DIR := $(OSD_ROOT)/osd-util
+DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a
+LIBS += $(DEPLIBS) -lsqlite3 -lm
+all: $(PROGRAMS)
+bs_osdemu.o: bs_osdemu.c $(DEPLIBS)
+	$(CC) -c $(CFLAGS) -I$(OSD_TARGET_DIR) $< -o $@
+endif
+
 INCLUDES += -I.
 
 CFLAGS += -D_GNU_SOURCE
@@ -82,6 +101,8 @@ else
 	CFLAGS += -Ibsd/
 	TGTD_OBJS += bsd/epoll.o
 	TGTD_OBJS += bsd/os.o
+	# sqlite3 libs are found elsewhere in BSD
+	LIBS := -L/usr/local/lib $(LIBS)
 endif
 
 TGTD_DEP = $(TGTD_OBJS:.o=.d)
