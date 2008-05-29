@@ -1538,6 +1538,7 @@ exit:
 
 void dump_cdb(struct scsi_cmd *cmd)
 {
+#ifndef NDEBUG
 	uint8_t *cdb = cmd->scb;
 
 	switch(cmd->scb_len) {
@@ -1566,6 +1567,7 @@ void dump_cdb(struct scsi_cmd *cmd)
 			cdb[12], cdb[13], cdb[14], cdb[15]);
 		break;
 	}
+#endif
 }
 
 int spc_illegal_op(int host_no, struct scsi_cmd *cmd)

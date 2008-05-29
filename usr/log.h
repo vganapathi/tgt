@@ -74,9 +74,15 @@ do {									\
 	log_error("%s(%d) " fmt, __FUNCTION__, __LINE__, ##args);	\
 } while (0)
 
+#ifndef NDEBUG
 #define dprintf(fmt, args...)						\
 do {									\
 	log_debug("%s(%d) " fmt, __FUNCTION__, __LINE__, ##args);	\
 } while (0)
+#else
+#define dprintf(fmt, args...)						\
+do {									\
+} while (0)
+#endif
 
 #endif	/* LOG_H */

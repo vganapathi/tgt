@@ -25,10 +25,12 @@
 #include <syslog.h>
 #include <signal.h>
 #include <errno.h>
+#include <time.h>
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 
 #include "os.h"
 #include "log.h"
@@ -274,7 +276,16 @@ static void dolog(int prio, const char *fmt, va_list ap)
 			return;
 		}
 	} else {
-		fprintf(stderr, "%s: ", log_name);
+		struct timeval tv;
+		time_t tp;
+		char buffer[16];
+
+		gettimeofday(&tv, NULL);
+		tp = tv.tv_sec;
+		strftime(buffer, 9, "%H:%M:%S", localtime(&tp));
+		sprintf(buffer+8, ".%06ld", (long) tv.tv_usec);
+
+		fprintf(stderr, "%s: [%s] ", log_name, buffer);
 		vfprintf(stderr, fmt, ap);
 		fflush(stderr);
 	}
