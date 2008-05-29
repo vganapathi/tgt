@@ -78,7 +78,10 @@ Target framework daemon, version %s\n\
 /* Default TGT mgmt port */
 short int control_port = 0;
 
-static void signal_catch(int signo) {
+static void signal_catch(int signo)
+{
+	log_error("caught signal %d, exiting\n", signo);
+	system_active = 0;
 }
 
 static int nr_file_adjust(void)
@@ -388,7 +391,7 @@ int main(int argc, char **argv)
 	if (err)
 		exit(1);
 
-	if (is_daemon && daemon(0,0))
+	if (is_daemon && daemon(1,1))
 		exit(1);
 
 	err = os_oom_adjust();

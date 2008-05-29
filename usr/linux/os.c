@@ -73,7 +73,7 @@ int os_ipc_perm(int fd)
 		return -1;
 	}
 
-	if (cred.uid || cred.gid)
+	if (cred.uid != geteuid() || cred.gid != getegid())
 		return -EPERM;
 
 	return 0;
@@ -84,7 +84,10 @@ int os_oom_adjust(void)
 	int fd, err;
 	char path[64];
 
-	/* Avoid oom-killer */
+	/* Avoid oom-killer, only if root */
+	if (getuid() != 0)
+		return 0;
+
 	sprintf(path, "/proc/%d/oom_adj", getpid());
 	fd = open(path, O_WRONLY);
 	if (fd < 0) {
