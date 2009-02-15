@@ -1,5 +1,5 @@
-#ifndef __LIST_H__
-#define __LIST_H__
+#ifndef __TGT_LIST_H__
+#define __TGT_LIST_H__
 
 /* taken from linux kernel */
 
@@ -115,4 +115,4 @@ static inline void list_splice_init(struct list_head *list,
 	}
 }
 
-#endif
+#endif /*__TGT_LIST_H__*/

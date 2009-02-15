@@ -28,7 +28,7 @@
 
 #include <sys/sem.h>
 
-union semun {
+union tgt_semun {
 	int val;
 	struct semid_ds *buf;
 	unsigned short int *array;
@@ -56,7 +56,7 @@ struct logarea {
 	void *end;
 	char *buff;
 	int semid;
-	union semun semarg;
+	union tgt_semun semarg;
 };
 
 extern int log_init (char * progname, int size, int daemon, int debug);
