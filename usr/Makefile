@@ -4,6 +4,8 @@ ifneq ($(shell test -e /usr/include/linux/signalfd.h && echo 1),)
 CFLAGS += -DUSE_SIGNALFD
 endif
 
+UNAME ?= $(shell uname)
+
 ifneq ($(IBMVIO),)
 CFLAGS += -DIBMVIO -DUSE_KERNEL
 TGTD_OBJS += $(addprefix ibmvio/, ibmvio.o)
@@ -15,7 +17,10 @@ CFLAGS += -DISCSI
 TGTD_OBJS += $(addprefix iscsi/, conn.o param.o session.o \
 		iscsid.o target.o chap.o sha1.o md5.o transport.o iscsi_tcp.o \
 		isns.o)
-TGTD_OBJS += bs_rdwr.o bs_aio.o
+TGTD_OBJS += bs_rdwr.o
+ifneq (FreeBSD,$(UNAME))
+TGTD_OBJS += bs_aio.o
+endif
 
 ifneq ($(ISCSI_RDMA),)
 CFLAGS += -DISCSI_RDMA
@@ -62,9 +67,16 @@ PROGRAMS += tgtd tgtadm tgtimg
 TGTD_OBJS += tgtd.o mgmt.o target.o scsi.o log.o driver.o util.o work.o \
 		parser.o spc.o sbc.o mmc.o osd.o scc.o smc.o \
 		ssc.o bs_ssc.o libssc.o \
-		bs_null.o bs_sg.o bs.o libcrc32c.o
+		bs_null.o bs.o libcrc32c.o
 
-TGTD_OBJS += linux/os.o
+ifneq (FreeBSD,$(UNAME))
+	TGTD_OBJS += bs_sg.o
+	TGTD_OBJS += linux/os.o
+else
+	CFLAGS += -Ibsd/
+	TGTD_OBJS += bsd/epoll.o
+	TGTD_OBJS += bsd/os.o
+endif
 
 TGTD_DEP = $(TGTD_OBJS:.o=.d)
 
