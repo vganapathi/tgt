@@ -23,6 +23,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include <linux/fs.h>
+
 #include "bs_ssc.h"
 #include "ssc.h"
 #include "be_byteshift.h"

@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <syscall.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 #include <linux/fs.h>
 

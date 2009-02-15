@@ -20,16 +20,20 @@
  */
 
 #include <errno.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <sys/socket.h>
+#include <netinet/ip.h>
+#include <arpa/inet.h>
+
 #include <sys/epoll.h>
-#include <sys/types.h>
 
 #include "iscsid.h"
 #include "parser.h"

@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <linux/fs.h>
+
 #include "media.h"
 #include "bs_ssc.h"
 #include "ssc.h"

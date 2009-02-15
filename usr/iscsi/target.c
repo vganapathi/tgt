@@ -26,9 +26,9 @@
 #include <netdb.h>
 #include <sys/stat.h>
 #include <sys/un.h>
+#include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>

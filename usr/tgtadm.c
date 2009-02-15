@@ -36,6 +36,8 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
+#include <linux/fs.h>
+
 #include "scsi.h"
 #include "util.h"
 #include "list.h"

@@ -30,6 +30,8 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 
+#include <linux/fs.h>
+
 #include "list.h"
 #include "util.h"
 #include "tgtd.h"

@@ -29,7 +29,6 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/fs.h>
-#include <sys/sysmacros.h>
 
 #include "log.h"
 #include "util.h"
