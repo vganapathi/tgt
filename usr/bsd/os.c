@@ -47,3 +47,9 @@ int os_blockdev_size(int fd, uint64_t *size)
 {
 	return ioctl(fd, DIOCGMEDIASIZE, &size);
 }
+
+int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
+		       __const struct timespec *__timeout)
+{
+	return -1;
+}

@@ -104,3 +104,9 @@ int os_blockdev_size(int fd, uint64_t *size)
 {
 	return ioctl(fd, BLKGETSIZE64, size);
 }
+
+int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
+		       __const struct timespec *__timeout)
+{
+	return semtimedop (__semid, __sops, __nsops, __timeout);
+}

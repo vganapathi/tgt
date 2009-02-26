@@ -13,4 +13,9 @@ int os_oom_adjust(void);
 
 int os_blockdev_size(int fd, uint64_t *size);
 
+struct sembuf;
+struct timespec;
+int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
+		       __const struct timespec *__timeout);
+
 #endif /* ndef __TGT_OS_H__*/

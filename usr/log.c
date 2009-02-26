@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "os.h"
 #include "log.h"
 
 #define SEMKEY	0xA7L
@@ -260,7 +261,7 @@ static void dolog(int prio, const char *fmt, va_list ap)
 		ops.sem_num = 0;
 		ops.sem_flg = 0;
 		ops.sem_op = -1;
-		if (semtimedop(la->semid, &ops, 1, &ts) < 0) {
+		if (os_semtimedop(la->semid, &ops, 1, &ts) < 0) {
 			syslog(LOG_ERR, "semop up failed");
 			return;
 		}
