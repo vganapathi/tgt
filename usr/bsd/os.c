@@ -26,6 +26,8 @@
 
 #include <linux/fs.h>
 
+#include <sys/socket.h>
+
 #include "os.h"
 
 int os_sync_file_range(int fd, __off64_t offset, __off64_t bytes)
@@ -45,7 +47,14 @@ int os_oom_adjust(void)
 
 int os_blockdev_size(int fd, uint64_t *size)
 {
+#ifdef __APPLE__
+	uint32_t size32;
+	int err = ioctl(fd, DKIOCGETBLOCKSIZE, &size32);
+	*size = size32;
+	return err;
+#else
 	return ioctl(fd, DIOCGMEDIASIZE, &size);
+#endif /*  else __APPLE__ */
 }
 
 int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
