@@ -64,6 +64,8 @@ TGTD_OBJS += tgtd.o mgmt.o target.o scsi.o log.o driver.o util.o work.o \
 		ssc.o bs_ssc.o libssc.o \
 		bs_null.o bs_sg.o bs.o libcrc32c.o
 
+TGTD_OBJS += linux/os.o
+
 TGTD_DEP = $(TGTD_OBJS:.o=.d)
 
 .PHONY:all
