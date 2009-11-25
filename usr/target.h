@@ -8,6 +8,8 @@
 #define	HASH_ORDER	4
 #define	hashfn(val)	hash_long((unsigned long) (val), HASH_ORDER)
 
+#define TGT_SHADOW_LUN 0xffffffffffffffffULL
+
 struct acl_entry {
 	char *address;
 	struct list_head aclent_list;

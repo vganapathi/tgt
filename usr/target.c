@@ -472,7 +472,10 @@ int tgt_device_create(int tid, int dev_type, uint64_t lun, char *params,
 		goto out;
 	}
 
-	bst = target->bst;
+	bst = (lun == TGT_SHADOW_LUN) ?
+		get_backingstore_template("null") :
+		target->bst;
+
 	if (backing) {
 		if (bstype) {
 			bst = get_backingstore_template(bstype);
@@ -848,11 +851,11 @@ int target_cmd_queue(int tid, struct scsi_cmd *cmd)
 	cmd->dev_id = dev_id;
 	dprintf("%p %x %" PRIx64 "\n", cmd, cmd->scb[0], dev_id);
 	cmd->dev = device_lookup(target, dev_id);
-	/* use LUN0 */
+	/* use TGT_SHADOW_LUN */
 	if (!cmd->dev)
-		cmd->dev = list_first_entry(&target->device_list,
-					    struct scsi_lu,
-					    device_siblings);
+		cmd->dev = list_last_entry(&target->device_list,
+					   struct scsi_lu,
+					   device_siblings);
 
 	cmd->itn_lu_info = it_nexus_lu_info_lookup(itn, cmd->dev->lun);
 
@@ -1614,7 +1617,9 @@ int tgt_target_show_all(char *buf, int rest)
 		}
 
 		shprintf(total, buf, rest, _TAB1 "LUN information:\n");
-		list_for_each_entry(lu, &target->device_list, device_siblings)
+		list_for_each_entry(lu, &target->device_list, device_siblings) {
+			if (lu->lun == TGT_SHADOW_LUN)
+				continue;
 			shprintf(total, buf, rest,
 				 _TAB2 "LUN: %" PRIu64 "\n"
   				 _TAB3 "Type: %s\n"
@@ -1636,6 +1641,7 @@ int tgt_target_show_all(char *buf, int rest)
 					(lu->bst->bs_name ? : "Unknown") :
 					"None",
 				 lu->path ? : "None");
+		}
 
 		if (!strcmp(tgt_drivers[target->lid]->name, "iscsi")) {
 			int i, aid;
@@ -1752,7 +1758,7 @@ int tgt_target_create(int lld, int tid, char *args)
 	INIT_LIST_HEAD(&target->acl_list);
 	INIT_LIST_HEAD(&target->it_nexus_list);
 
-	tgt_device_create(tid, TYPE_RAID, 0, NULL, 0);
+	tgt_device_create(tid, TYPE_NO_LUN, TGT_SHADOW_LUN, NULL, 0);
 
 	if (tgt_drivers[lld]->target_create)
 		tgt_drivers[lld]->target_create(target);
@@ -1779,8 +1785,8 @@ int tgt_target_destroy(int lld_no, int tid)
 	}
 
 	while (!list_empty(&target->device_list)) {
-		/* we remove lun0 last */
-		lu = list_entry(target->device_list.prev, struct scsi_lu,
+		/* we remove TGT_SHADOW_LUN last */
+		lu = list_entry(target->device_list.next, struct scsi_lu,
 				device_siblings);
 		ret = tgt_device_destroy(tid, lu->lun, 1);
 		if (ret)

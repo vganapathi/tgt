@@ -692,10 +692,12 @@ int main(int argc, char **argv)
 			eprintf("'tid' option is necessary\n");
 			exit(EINVAL);
 		}
-		if (lun == UINT64_MAX) {
+
+/*		if (lun == UINT64_MAX) {
 			eprintf("'lun' option is necessary\n");
 			exit(EINVAL);
 		}
+*/
 		switch (op) {
 		case OP_NEW:
 			rc = verify_mode_params(argc, argv, "LmotlbEYC");

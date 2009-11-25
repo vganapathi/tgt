@@ -270,6 +270,8 @@ int spc_report_luns(int host_no, struct scsi_cmd *cmd)
 	nr_luns = 0;
 
 	list_for_each_entry(lu, dev_list, device_siblings) {
+		if (lu->lun == TGT_SHADOW_LUN)
+			continue;
 		nr_luns++;
 
 		if (!alen)
@@ -1571,6 +1573,14 @@ int spc_illegal_op(int host_no, struct scsi_cmd *cmd)
 	dump_cdb(cmd);
 	scsi_set_in_resid_by_actual(cmd, 0);
 	sense_data_build(cmd, ILLEGAL_REQUEST, ASC_INVALID_OP_CODE);
+	return SAM_STAT_CHECK_CONDITION;
+}
+
+int spc_invalid_lun(int host_no, struct scsi_cmd *cmd)
+{
+	dump_cdb(cmd);
+	scsi_set_in_resid_by_actual(cmd, 0);
+	sense_data_build(cmd, ILLEGAL_REQUEST, ASC_LUN_NOT_SUPPORTED);
 	return SAM_STAT_CHECK_CONDITION;
 }
 

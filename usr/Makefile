@@ -71,7 +71,7 @@ LIBS += -lpthread
 
 PROGRAMS += tgtd tgtadm tgtimg
 TGTD_OBJS += tgtd.o mgmt.o target.o scsi.o log.o driver.o util.o work.o \
-		parser.o spc.o sbc.o mmc.o osd.o scc.o smc.o \
+		parser.o spc.o sbc.o mmc.o nolun.o osd.o scc.o smc.o \
 		ssc.o bs_ssc.o libssc.o \
 		bs_null.o bs.o libcrc32c.o
 
