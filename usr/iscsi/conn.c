@@ -64,6 +64,7 @@ int conn_init(struct iscsi_connection *conn)
 	INIT_LIST_HEAD(&conn->tx_clist);
 	INIT_LIST_HEAD(&conn->task_list);
 
+	eprintf("connection open, %p\n", conn);
 	return 0;
 }
 
@@ -103,7 +104,7 @@ void conn_close(struct iscsi_connection *conn)
 	if (!conn->session)
 		goto done;
 
-	eprintf("sesson %p %d\n", conn->session, conn->session->refcount);
+	dprintf("sesson %p %d\n", conn->session, conn->session->refcount);
 
 	/*
 	 * We just closed the ep so we are not going to send/recv anything.
