@@ -5,6 +5,12 @@ CFLAGS += -DUSE_SIGNALFD
 endif
 
 UNAME ?= $(shell uname)
+ifneq (FreeBSD,$(UNAME))
+ifneq (Darwin,$(UNAME))
+AIO=1
+EPOLL=1
+endif
+endif
 
 ifneq ($(IBMVIO),)
 CFLAGS += -DIBMVIO -DUSE_KERNEL
@@ -18,7 +24,7 @@ TGTD_OBJS += $(addprefix iscsi/, conn.o param.o session.o \
 		iscsid.o target.o chap.o sha1.o md5.o transport.o iscsi_tcp.o \
 		isns.o)
 TGTD_OBJS += bs_rdwr.o
-ifneq (FreeBSD,$(UNAME))
+ifneq ($(AIO),)
 TGTD_OBJS += bs_aio.o
 endif
 
@@ -69,7 +75,7 @@ TGTD_OBJS += tgtd.o mgmt.o target.o scsi.o log.o driver.o util.o work.o \
 		ssc.o bs_ssc.o libssc.o \
 		bs_null.o bs.o libcrc32c.o
 
-ifneq (FreeBSD,$(UNAME))
+ifneq ($(EPOLL),)
 	TGTD_OBJS += bs_sg.o
 	TGTD_OBJS += linux/os.o
 else
