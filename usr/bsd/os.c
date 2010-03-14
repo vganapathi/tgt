@@ -21,6 +21,8 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <sys/disk.h>
+#include <sys/ioctl.h>
 
 #include <linux/fs.h>
 
@@ -29,4 +31,19 @@
 int os_sync_file_range(int fd, __off64_t offset, __off64_t bytes)
 {
 	return fsync(fd);
+}
+
+int os_ipc_perm(int fd)
+{
+	return 0;
+}
+
+int os_oom_adjust(void)
+{
+	return 0;
+}
+
+int os_blockdev_size(int fd, uint64_t *size)
+{
+	return ioctl(fd, DIOCGMEDIASIZE, &size);
 }

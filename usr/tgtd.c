@@ -81,28 +81,6 @@ short int control_port = 0;
 static void signal_catch(int signo) {
 }
 
-static int oom_adjust(void)
-{
-	int fd, err;
-	char path[64];
-
-	/* Avoid oom-killer */
-	sprintf(path, "/proc/%d/oom_adj", getpid());
-	fd = open(path, O_WRONLY);
-	if (fd < 0) {
-		fprintf(stderr, "can't adjust oom-killer's pardon %s, %m\n", path);
-		return errno;
-	}
-	err = write(fd, "-17\n", 4);
-	if (err < 0) {
-		fprintf(stderr, "can't adjust oom-killer's pardon %s, %m\n", path);
-		close(fd);
-		return errno;
-	}
-	close(fd);
-	return 0;
-}
-
 static int nr_file_adjust(void)
 {
 	int ret, fd, max = 1024 * 1024;
@@ -425,7 +403,7 @@ int main(int argc, char **argv)
 	if (is_daemon && daemon(0,0))
 		exit(1);
 
-	err = oom_adjust();
+	err = os_oom_adjust();
 	if (err)
 		exit(1);
 

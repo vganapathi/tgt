@@ -101,7 +101,7 @@ int backed_file_open(char *path, int oflag, uint64_t *size)
 	if (S_ISREG(st.st_mode))
 		*size = st.st_size;
 	else if (S_ISBLK(st.st_mode)) {
-		err = ioctl(fd, BLKGETSIZE64, size);
+		err = os_blockdev_size(fd, size);
 		if (err < 0) {
 			eprintf("Cannot get size, %m\n");
 			goto close_fd;

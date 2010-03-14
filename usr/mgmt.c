@@ -19,19 +19,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
  */
-#include <ctype.h>
-#include <dirent.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/un.h>
 
 #include "list.h"
@@ -382,25 +376,6 @@ static int ipc_accept(int accept_fd)
 	return fd;
 }
 
-static int ipc_perm(int fd)
-{
-	struct ucred cred;
-	socklen_t len;
-	int err;
-
-	len = sizeof(cred);
-	err = getsockopt(fd, SOL_SOCKET, SO_PEERCRED, (void *) &cred, &len);
-	if (err) {
-		eprintf("can't get sockopt, %m\n");
-		return -1;
-	}
-
-	if (cred.uid || cred.gid)
-		return -EPERM;
-
-	return 0;
-}
-
 static void mtask_handler(int fd, int events, void *data)
 {
 	int err, len;
@@ -509,7 +484,7 @@ static void mgmt_event_handler(int accept_fd, int events, void *data)
 		return;
 	}
 
-	err = ipc_perm(fd);
+	err = os_ipc_perm(fd);
 	if (err < 0) {
 		eprintf("permission error\n");
 		goto out;
