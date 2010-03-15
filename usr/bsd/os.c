@@ -27,6 +27,7 @@
 #include <linux/fs.h>
 
 #include <sys/socket.h>
+#include <stdio.h>
 
 #include "os.h"
 
@@ -75,6 +76,25 @@ int bsd_setsockopt(int s, int level, int optname, const void *optval,
 
 int os_nr_open(void)
 {
+#ifdef __APPLE__
+	FILE *fp;
+	char s[1024];
+	int max;
+
+	if (!(fp = popen("sysctl -a kern.maxfilesperproc", "r"))) {
+		fprintf(stderr, "can't call sysctl\n");
+		return 0;
+	}
+
+	if ((fgets(s, sizeof(s), fp) == NULL) ||
+	    (sscanf(s, "kern.maxfilesperproc: %d", &max) != 1)) {
+		fprintf(stderr, "can't read sysctl kern.maxfilesperproc\n");
+		max = 0;
+	}
+	pclose(fp);
+	return max;
+#else
 	/* Just Let tgtd play with it's default max_files, as it likes them */
 	return 0;
+#endif /*  else __APPLE__ */
 }
