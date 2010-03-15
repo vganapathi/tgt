@@ -54,6 +54,16 @@ int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
 	return -1;
 }
 
+int bsd_setsockopt(int s, int level, int optname, const void *optval,
+		   socklen_t optlen)
+{
+	if (optname == BSD_NOT_SUPPORTED)
+		return 0;
+
+#undef setsockopt
+	return setsockopt(s, level, optname, optval, optlen);
+}
+
 int os_nr_open(void)
 {
 	/* Just Let tgtd play with it's default max_files, as it likes them */
