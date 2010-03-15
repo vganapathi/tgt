@@ -21,6 +21,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -109,4 +110,25 @@ int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
 		       __const struct timespec *__timeout)
 {
 	return semtimedop (__semid, __sops, __nsops, __timeout);
+}
+
+int os_nr_open(void)
+{
+	int ret, fd;
+	char path[] = "/proc/sys/fs/nr_open";
+	char buf[64];
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		fprintf(stderr, "can't open %s, %m\n", path);
+		return 0;
+	}
+	ret = read(fd, buf, sizeof(buf));
+	close(fd);
+	if (ret < 0) {
+		fprintf(stderr, "can't read %s, %m\n", path);
+		return ret;
+	}
+
+	return atoi(buf);
 }

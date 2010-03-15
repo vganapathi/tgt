@@ -13,6 +13,8 @@ int os_oom_adjust(void);
 
 int os_blockdev_size(int fd, uint64_t *size);
 
+int os_nr_open(void);
+
 struct sembuf;
 struct timespec;
 int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,

@@ -53,3 +53,9 @@ int os_semtimedop (int __semid, struct sembuf *__sops, size_t __nsops,
 {
 	return -1;
 }
+
+int os_nr_open(void)
+{
+	/* Just Let tgtd play with it's default max_files, as it likes them */
+	return 0;
+}

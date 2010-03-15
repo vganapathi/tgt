@@ -83,27 +83,15 @@ static void signal_catch(int signo) {
 
 static int nr_file_adjust(void)
 {
-	int ret, fd, max = 1024 * 1024;
-	char path[] = "/proc/sys/fs/nr_open";
-	char buf[64];
+	int ret, max;
 	struct rlimit rlim;
 
-	/* Avoid oom-killer */
-	fd = open(path, O_RDONLY);
-	if (fd < 0) {
-		fprintf(stderr, "can't open %s, %m\n", path);
-		goto set_rlimit;
-	}
-	ret = read(fd, buf, sizeof(buf));
-	if (ret < 0) {
-		fprintf(stderr, "can't read %s, %m\n", path);
-		close(fd);
-		return errno;
-	}
-	close(fd);
-	max = atoi(buf);
+	max = os_nr_open();
+	if (max < 0)
+		return max;
+	else if (max == 0)
+		max = 1024 * 1024;
 
-set_rlimit:
 	rlim.rlim_cur = rlim.rlim_max = max;
 
 	ret = setrlimit(RLIMIT_NOFILE, &rlim);
