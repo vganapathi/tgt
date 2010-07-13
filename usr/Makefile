@@ -88,7 +88,9 @@ CFLAGS += -DTGT_VERSION=\"$(VERSION)$(EXTRAVERSION)\"
 
 LIBS += -lpthread
 
-PROGRAMS += tgtd tgtadm tgtimg
+TGTD ?= tgtd
+
+PROGRAMS += $(TGTD) tgtadm tgtimg
 TGTD_OBJS += tgtd.o mgmt.o target.o scsi.o log.o driver.o util.o work.o \
 		parser.o spc.o sbc.o mmc.o nolun.o osd.o scc.o smc.o \
 		ssc.o bs_ssc.o libssc.o \
@@ -110,7 +112,7 @@ TGTD_DEP = $(TGTD_OBJS:.o=.d)
 .PHONY:all
 all: $(PROGRAMS)
 
-tgtd: $(TGTD_OBJS)
+$(TGTD): $(TGTD_OBJS)
 	$(CC) $^ -o $@ $(LIBS)
 
 -include $(TGTD_DEP)
