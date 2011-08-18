@@ -113,6 +113,7 @@ struct option const long_options[] = {
 	{"name", required_argument, NULL, 'n'},
 	{"value", required_argument, NULL, 'v'},
 	{"backing-store", required_argument, NULL, 'b'},
+	{"osd_name", required_argument, NULL, 'a' },
 	{"bstype", required_argument, NULL, 'E'},
 	{"targetname", required_argument, NULL, 'T'},
 	{"initiator-address", required_argument, NULL, 'I'},
@@ -156,6 +157,7 @@ Linux SCSI Target Framework Administration Utility, version %s\n\
   --lld [driver] --mode target --op unbind --tid=[id] --initiator-address=[src]\n\
                         disable the specific permitted initiators.\n\
   --lld [driver] --mode logicalunit --op new --tid=[id] --lun=[lun] --backing-store=[path] --bstype=[type]\n\
+                        --osd_name=[name]\n\
                         add a new logical unit with [lun] to the specific\n\
                         target with [id]. The logical unit is offered\n\
                         to the initiators. [path] must be block device files\n\
@@ -432,7 +434,7 @@ int main(int argc, char **argv)
 	uint32_t cid, hostno;
 	uint64_t sid, lun;
 	char *name, *value, *path, *targetname, *params, *address, *targetOps;
-	char *bstype;
+	char *bstype, *osd_name;
 	char *user, *password;
 	char *buf;
 	size_t bufsz = BUFSIZE + sizeof(struct tgtadm_req);
@@ -447,7 +449,7 @@ int main(int argc, char **argv)
 	ac_dir = ACCOUNT_TYPE_INCOMING;
 	rest = BUFSIZE;
 	name = value = path = targetname = address = targetOps = bstype = NULL;
-	user = password = NULL;
+	user = password = osd_name = NULL;
 
 	buf = valloc(bufsz);
 	if (!buf) {
@@ -499,6 +501,9 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			path = optarg;
+			break;
+		case 'a':
+			osd_name = optarg;
 			break;
 		case 'T':
 			targetname = optarg;
@@ -700,7 +705,7 @@ int main(int argc, char **argv)
 */
 		switch (op) {
 		case OP_NEW:
-			rc = verify_mode_params(argc, argv, "LmotlbEYC");
+			rc = verify_mode_params(argc, argv, "LmotlabEYC");
 			if (rc) {
 				eprintf("target mode: option '-%c' is not "
 					  "allowed/supported\n", rc);
@@ -753,6 +758,9 @@ int main(int argc, char **argv)
 	if (path)
 		shprintf(total, params, rest, "%spath=%s",
 			 rest == BUFSIZE ? "" : ",", path);
+	if (osd_name)
+		shprintf(total, params, rest, "%sosd_name=%s",
+			rest == BUFSIZE ? "" : ",", osd_name);
 
 	if (req->device_type == TYPE_TAPE)
 		shprintf(total, params, rest, "%sbstype=%s",

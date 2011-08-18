@@ -78,6 +78,13 @@ static int bs_osdemu_open(struct scsi_lu *lu, char *path, int *fd,
 		eprintf("osd_open failed\n");
 		goto out;
 	}
+	if (lu->osdname) {
+		ret = osd_set_name(osd, lu->osdname);
+		if (ret) {
+			eprintf("osd_set_name failed\n");
+			goto out;
+		}
+	}
 
 	*fd = -1;
 	*size = 0;  /* disk size */

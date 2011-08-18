@@ -150,7 +150,7 @@ struct scsi_lu {
 	uint64_t size;
 	uint64_t lun;
 	char *path;
-
+	char *osdname;
 	/* the list of devices belonging to a target */
 	struct list_head device_siblings;
 

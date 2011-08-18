@@ -418,19 +418,20 @@ __device_lookup(int tid, uint64_t lun, struct target **t)
 }
 
 enum {
-	Opt_path, Opt_bstype, Opt_err,
+	Opt_path, Opt_bstype, Opt_osdname, Opt_err,
 };
 
 static match_table_t device_tokens = {
 	{Opt_path, "path=%s"},
 	{Opt_bstype, "bstype=%s"},
+	{Opt_osdname, "osd_name=%s"},
 	{Opt_err, NULL},
 };
 
 int tgt_device_create(int tid, int dev_type, uint64_t lun, char *params,
 		      int backing)
 {
-	char *p, *path = NULL, *bstype = NULL;
+	char *p, *path = NULL, *bstype = NULL, *osdname = NULL;
 	int ret = 0;
 	struct target *target;
 	struct scsi_lu *lu, *pos;
@@ -451,6 +452,9 @@ int tgt_device_create(int tid, int dev_type, uint64_t lun, char *params,
 		case Opt_path:
 			path = match_strdup(&args[0]);
 			break;
+                case Opt_osdname:
+                        osdname = match_strdup(&args[0]);
+                        break;
 		case Opt_bstype:
 			bstype = match_strdup(&args[0]);
 			break;
@@ -508,6 +512,8 @@ int tgt_device_create(int tid, int dev_type, uint64_t lun, char *params,
 	INIT_LIST_HEAD(&lu->registration_list);
 	lu->prgeneration = 0;
 	lu->pr_holder = NULL;
+        if (osdname)
+            lu->osdname = osdname;
 
  	if (lu->dev_type_template.lu_init) {
 		ret = lu->dev_type_template.lu_init(lu);
