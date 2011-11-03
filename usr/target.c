@@ -1847,7 +1847,7 @@ static char *system_state_name(enum scsi_target_state state)
 	char *name = NULL;
 
 	for (i = 0; i < ARRAY_SIZE(system_state); i++) {
-		if (system_state[i].value == state) {
+		if (system_state[i].value == (enum tgt_system_state)state) {
 			name = system_state[i].name;
 			break;
 		}
