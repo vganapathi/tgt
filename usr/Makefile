@@ -75,10 +75,7 @@ OSD_UTIL_DIR := $(OSD_ROOT)/osd-util
 DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a
 LIBS += $(DEPLIBS) -lm
 
-ifneq ($(SQLITE_STATIC_A),)
-# In panasas builds we statically link with a build-tree libsqlite.a
-LIBS += $(SQLITE_STATIC_A)
-else
+ifneq ($(PANASAS_OSD),1)
 LIBS += -lsqlite3
 endif # PAN_BUILD
 
