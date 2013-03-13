@@ -75,11 +75,9 @@ OSD_UTIL_DIR := $(OSD_ROOT)/osd-util
 DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a
 LIBS += $(DEPLIBS) -lm
 
-ifneq ($(SQLITE_STATIC_A),)
-# In panasas builds we statically link with a build-tree libsqlite.a
-LIBS += $(SQLITE_STATIC_A)
-else
-LIBS += -lsqlite3
+ifneq ($(TGT_EXTRA_LIBS),)
+# External users like osd-target will need extra libs included
+LIBS += $(TGT_EXTRA_LIBS)
 endif # PAN_BUILD
 
 all: $(PROGRAMS)
