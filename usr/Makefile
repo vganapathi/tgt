@@ -72,12 +72,17 @@ TGTD_OBJS += bs_osdemu.o
 OSD_ROOT := ../..
 OSD_TARGET_DIR := $(OSD_ROOT)/osd-target
 OSD_UTIL_DIR := $(OSD_ROOT)/osd-util
-DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a
+OSD_DBUS_DIR := $(OSD_ROOT)/dbus
+DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a $(OSD_DBUS_DIR)/libosddbus.a
 LIBS += $(DEPLIBS) -lm
 
 ifneq ($(PANASAS_OSD),1)
 LIBS += -lsqlite3
 endif # PAN_BUILD
+
+ifeq ($(DBUS_STATS),1)
+LIBS += -ldbus-1
+endif
 
 all: $(PROGRAMS)
 bs_osdemu.o: bs_osdemu.c $(DEPLIBS) Makefile

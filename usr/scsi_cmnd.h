@@ -51,6 +51,8 @@ struct scsi_cmd {
 
 	struct it_nexus *it_nexus;
 	struct it_nexus_lu_info *itn_lu_info;
+
+        char ip[50];
 };
 
 #define scsi_cmnd_accessor(field, type)						\

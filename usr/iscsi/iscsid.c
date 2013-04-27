@@ -32,6 +32,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "iscsid.h"
 #include "tgtd.h"
@@ -520,7 +523,8 @@ static void login_start(struct iscsi_connection *conn)
 
 	conn->exp_cmd_sn = be32_to_cpu(req->cmdsn);
 	conn->max_cmd_sn = conn->exp_cmd_sn + 1;
-	dprintf("exp_cmd_sn: %d,%d\n", conn->exp_cmd_sn, req->cmdsn);
+        printf("exp_cmd_sn: %d,%d\n", conn->exp_cmd_sn, req->cmdsn);
+
 
 	text_key_add(conn, "TargetPortalGroupTag", "1");
 }
@@ -1219,6 +1223,8 @@ static int iscsi_target_cmd_queue(struct iscsi_task *task)
 	struct scsi_cmd *scmd = &task->scmd;
 	struct iscsi_connection *conn = task->conn;
 	struct iscsi_cmd *req = (struct iscsi_cmd *) &task->req;
+        struct sockaddr_storage from;
+        socklen_t len;
 	uint32_t data_len;
 	uint8_t *ahs;
 	int ahslen;
@@ -1297,6 +1303,16 @@ static int iscsi_target_cmd_queue(struct iscsi_task *task)
 	memcpy(scmd->lun, task->req.lun, sizeof(scmd->lun));
 	scmd->attribute = cmd_attr(task);
 	scmd->tag = req->itt;
+        len = sizeof(from);
+        err = conn->tp->ep_getpeername(conn, (struct sockaddr *) &from, &len);
+        if (err < 0)
+        {
+            dprintf("failed getpeername %d\n", err);
+            return -EPERM;
+        }
+
+        strcpy(scmd->ip, inet_ntoa(((struct sockaddr_in *)&from)->sin_addr));
+
 	set_task_in_scsi(task);
 
 	err = target_cmd_queue(conn->session->target->tid, scmd);

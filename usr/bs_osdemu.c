@@ -123,7 +123,7 @@ static int bs_osdemu_cmd_submit(struct scsi_cmd *cmd)
 	data_out_len = scsi_get_out_length(cmd);
 	data_in = scsi_get_in_buffer(cmd);
 	data_in_len = scsi_get_in_length(cmd);
-	ret = osdemu_cmd_submit(osd, cmd->scb, data_out, data_out_len,
+	ret = osdemu_cmd_submit(osd, cmd->ip, cmd->scb, data_out, data_out_len,
 				&data_in, &data_in_len,
 				cmd->sense_buffer, &cmd->sense_len);
 
