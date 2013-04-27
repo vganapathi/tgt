@@ -76,8 +76,9 @@ OSD_DBUS_DIR := $(OSD_ROOT)/dbus
 DEPLIBS := $(OSD_TARGET_DIR)/libosdtgt.a $(OSD_UTIL_DIR)/libosdutil.a $(OSD_DBUS_DIR)/libosddbus.a
 LIBS += $(DEPLIBS) -lm
 
-ifneq ($(PANASAS_OSD),1)
-LIBS += -lsqlite3
+ifneq ($(TGT_EXTRA_LIBS),)
+# External users like osd-target will need extra libs included
+LIBS += $(TGT_EXTRA_LIBS)
 endif # PAN_BUILD
 
 ifeq ($(DBUS_STATS),1)
