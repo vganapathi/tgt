@@ -82,7 +82,7 @@ LIBS += $(TGT_EXTRA_LIBS)
 endif # PAN_BUILD
 
 ifeq ($(DBUS_STATS),1)
-LIBS += -ldbus-1
+LIBS += $(DBUS_LIB_LOC)/libdbus-1.so
 endif
 
 all: $(PROGRAMS)
